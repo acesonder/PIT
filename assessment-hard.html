@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HARD Assessment - OUTSINC PIT</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo-placeholder">OI</div>
+                <div class="site-title">
+                    <h1>HARD PIT Assessment</h1>
+                    <p>25-40 minutes • High-resolution survey</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+        </div>
+
+        <div class="info-section">
+            <h2>HARD Assessment - Comprehensive Survey</h2>
+            <p>This is a detailed, high-resolution assessment with 100-120 questions across 12 sections covering:</p>
+            <ul>
+                <li>Screening and Consent (with digital signature capability)</li>
+                <li>Demographics (comprehensive including sexual orientation, languages, immigration)</li>
+                <li>Household Composition (including custody and family connections)</li>
+                <li>Housing History (full timeline of last 5 residences)</li>
+                <li>Current Living Situation (detailed safety and amenity assessment)</li>
+                <li>Health and Wellness (physical, mental health, substance use, pain scale)</li>
+                <li>Income and Employment (including informal income, education, ID possession)</li>
+                <li>Service Connections (detailed agency relationships, service ratings)</li>
+                <li>Justice and Safety (police interactions, custody, victimization)</li>
+                <li>Technology and Communication (phone, internet, contact preferences)</li>
+                <li>Goals and Supports (priorities, housing readiness, barriers)</li>
+                <li>Enumerator's Observation (visual indicators, safety notes)</li>
+            </ul>
+            
+            <div class="alert alert-info" style="margin-top: 20px;">
+                <h3>High-Resolution Features:</h3>
+                <ul>
+                    <li>Auto-validation and skip logic</li>
+                    <li>GPS coordinates and timestamp capture</li>
+                    <li>Optional voice-note summary</li>
+                    <li>Real-time risk scoring</li>
+                    <li>Automated referral export capability</li>
+                </ul>
+            </div>
+            
+            <p><strong>Note:</strong> The full HARD assessment form follows the same structure as the SHORT assessment but with comprehensive detailed questions in each section plus additional specialized sections. All questions include "Prefer not to say" or "Skip" options.</p>
+            
+            <div style="margin-top: 30px;">
+                <a href="assessment-short.html?id=0" class="btn btn-primary">View SHORT Assessment Template</a>
+                <a href="new-assessment.html" class="btn btn-outline">← Back to New Assessment</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        // This is a placeholder. Full HARD assessment would follow same pattern as SHORT
+        // with all 100-120 questions from the requirements properly implemented
+        console.log('HARD Assessment - Assessment ID:', new URLSearchParams(window.location.search).get('id'));
+    </script>
+</body>
+</html>

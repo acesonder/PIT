@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New PIT Assessment - OUTSINC</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo-placeholder">OI</div>
+                <div class="site-title">
+                    <h1>OUTSINC</h1>
+                    <p>New PIT Assessment</p>
+                </div>
+            </div>
+            <nav class="nav-links">
+                <a href="index.html" class="btn btn-outline">← Back to Home</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Step 1: Staff Selection -->
+        <section id="step-staff" class="form-section">
+            <h2>Step 1: Staff Information</h2>
+            <p>Select the outreach staff member conducting this assessment:</p>
+            
+            <div class="form-group">
+                <label for="staff-select">Outreach Staff Member *</label>
+                <select id="staff-select" class="form-control" required>
+                    <option value="">Select staff member...</option>
+                </select>
+            </div>
+            
+            <button class="btn btn-primary" onclick="goToStep2()">Next: Client Information →</button>
+        </section>
+
+        <!-- Step 2: Client Identification -->
+        <section id="step-client" class="form-section hidden">
+            <h2>Step 2: Client Identification</h2>
+            <p>Enter the client's information. We'll check if they've already been assessed:</p>
+            
+            <div class="form-group">
+                <label for="client-first-name">First Name *</label>
+                <input type="text" id="client-first-name" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="client-last-name">Last Name *</label>
+                <input type="text" id="client-last-name" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="client-dob">Date of Birth (Optional)</label>
+                <input type="date" id="client-dob" class="form-control">
+                <small style="color: #666;">Providing date of birth helps prevent duplicates</small>
+            </div>
+            
+            <button class="btn btn-primary" onclick="checkClientDuplicate()">Check & Continue →</button>
+            <button class="btn btn-outline" onclick="goToStep1()">← Back</button>
+            
+            <!-- Existing Clients List -->
+            <div style="margin-top: 30px;">
+                <h3>Previously Assessed Clients</h3>
+                <div id="existing-clients-list" class="client-list">
+                    <p style="text-align: center; color: #666;">Loading...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 3: Duplicate Warning -->
+        <section id="step-duplicate-warning" class="form-section hidden">
+            <div class="alert alert-warning">
+                <h2>⚠️ Client Already Exists</h2>
+                <p id="duplicate-message"></p>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <button class="btn btn-outline" onclick="goToStep2()">← Go Back and Correct</button>
+                <button class="btn btn-danger" onclick="proceedAnyway()">Proceed Anyway (Create Duplicate)</button>
+            </div>
+        </section>
+
+        <!-- Step 4: Consent -->
+        <section id="step-consent" class="form-section hidden">
+            <h2>Step 3: Consent & Data Sharing</h2>
+            
+            <div class="consent-box">
+                <h3>Important: Your Privacy & Consent</h3>
+                <p>The information collected in this Point-in-Time Count will be used to:</p>
+                <ul>
+                    <li>Determine the number of people experiencing homelessness in Northumberland County</li>
+                    <li>Plan the capacity and services for the 2026 warming room</li>
+                    <li>Identify what additional services may be needed in our community</li>
+                </ul>
+                
+                <p><strong>You have two consent options:</strong></p>
+                
+                <div class="radio-group" style="margin: 20px 0;">
+                    <label class="radio-item">
+                        <input type="radio" name="consent-type" value="full" onchange="updateConsentType('full')">
+                        <div>
+                            <strong>Full Consent</strong>
+                            <p style="margin: 5px 0 0 0; font-size: 14px; color: #666;">
+                                I agree to share my full name and date of birth with Northumberland County. 
+                                This allows them to connect me with personalized housing and support services.
+                            </p>
+                        </div>
+                    </label>
+                    
+                    <label class="radio-item">
+                        <input type="radio" name="consent-type" value="partial" onchange="updateConsentType('partial')">
+                        <div>
+                            <strong>Partial Consent (Anonymous)</strong>
+                            <p style="margin: 5px 0 0 0; font-size: 14px; color: #666;">
+                                I prefer to remain anonymous. Only demographic information (age, gender) 
+                                will be shared with Northumberland County. OUTSINC will maintain my full count.
+                            </p>
+                        </div>
+                    </label>
+                </div>
+                
+                <p style="color: #d63031; font-weight: 600;">⚠️ You must select one option to continue</p>
+            </div>
+            
+            <div style="margin-top: 30px;">
+                <button class="btn btn-primary" id="consent-continue-btn" onclick="proceedToAssessmentType()" disabled>
+                    Continue to Assessment Selection →
+                </button>
+                <button class="btn btn-outline" onclick="goToStep2()">← Back</button>
+            </div>
+        </section>
+
+        <!-- Step 5: Assessment Type Selection -->
+        <section id="step-assessment-type" class="form-section hidden">
+            <h2>Step 4: Choose Assessment Type</h2>
+            <p>Please select the assessment length that works best for you:</p>
+            
+            <div class="assessment-types">
+                <!-- Short Assessment -->
+                <div class="assessment-card" onclick="selectAssessmentType('SHORT', this)">
+                    <h3>📝 SHORT Assessment</h3>
+                    <div class="assessment-details">
+                        <div class="detail-item">
+                            <strong>Duration:</strong> 6-10 minutes
+                        </div>
+                        <div class="detail-item">
+                            <strong>Questions:</strong> ~25 questions
+                        </div>
+                        <div class="detail-item">
+                            <strong>Sections:</strong> 7 sections
+                        </div>
+                    </div>
+                    <p style="margin-top: 15px; color: #666;">
+                        Quick count covering essential information: current location, duration of homelessness, 
+                        basic demographics, and service needs.
+                    </p>
+                    <p style="margin-top: 10px; font-weight: 600; color: var(--primary-color);">
+                        Best for: Rapid enumeration and basic service planning
+                    </p>
+                </div>
+                
+                <!-- Medium Assessment -->
+                <div class="assessment-card" onclick="selectAssessmentType('MEDIUM', this)">
+                    <h3>📋 MEDIUM Assessment</h3>
+                    <div class="assessment-details">
+                        <div class="detail-item">
+                            <strong>Duration:</strong> 12-20 minutes
+                        </div>
+                        <div class="detail-item">
+                            <strong>Questions:</strong> 50-70 questions
+                        </div>
+                        <div class="detail-item">
+                            <strong>Sections:</strong> 10 sections
+                        </div>
+                    </div>
+                    <p style="margin-top: 15px; color: #666;">
+                        Balanced assessment including housing history, health and wellness, income, barriers 
+                        to housing, and detailed service needs.
+                    </p>
+                    <p style="margin-top: 10px; font-weight: 600; color: var(--primary-color);">
+                        Best for: Comprehensive service planning and resource allocation
+                    </p>
+                </div>
+                
+                <!-- Hard Assessment -->
+                <div class="assessment-card" onclick="selectAssessmentType('HARD', this)">
+                    <h3>📊 HARD Assessment</h3>
+                    <div class="assessment-details">
+                        <div class="detail-item">
+                            <strong>Duration:</strong> 25-40 minutes
+                        </div>
+                        <div class="detail-item">
+                            <strong>Questions:</strong> 100-120 questions
+                        </div>
+                        <div class="detail-item">
+                            <strong>Sections:</strong> 12 sections
+                        </div>
+                    </div>
+                    <p style="margin-top: 15px; color: #666;">
+                        Detailed, high-resolution survey covering full housing timeline, comprehensive health 
+                        assessment, justice involvement, and detailed service matching.
+                    </p>
+                    <p style="margin-top: 10px; font-weight: 600; color: var(--primary-color);">
+                        Best for: Individual case planning and targeted intervention strategies
+                    </p>
+                </div>
+            </div>
+            
+            <div style="margin-top: 30px; text-align: center;">
+                <button class="btn btn-primary btn-lg" id="start-assessment-btn" onclick="startSelectedAssessment()" disabled>
+                    Begin Assessment →
+                </button>
+                <button class="btn btn-outline" onclick="goToConsent()">← Back</button>
+            </div>
+        </section>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Global state
+        let selectedStaffId = null;
+        let clientId = null;
+        let consentType = null;
+        let selectedAssessmentType = null;
+        
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            populateStaffDropdown('staff-select');
+            displayClientList('existing-clients-list');
+        });
+        
+        // Navigation functions
+        function goToStep1() {
+            document.getElementById('step-client').classList.add('hidden');
+            document.getElementById('step-staff').classList.remove('hidden');
+        }
+        
+        function goToStep2() {
+            selectedStaffId = document.getElementById('staff-select').value;
+            if (!selectedStaffId) {
+                showAlert('Please select a staff member', 'warning');
+                return;
+            }
+            
+            document.getElementById('step-staff').classList.add('hidden');
+            document.getElementById('step-consent').classList.add('hidden');
+            document.getElementById('step-duplicate-warning').classList.add('hidden');
+            document.getElementById('step-client').classList.remove('hidden');
+        }
+        
+        function goToConsent() {
+            document.getElementById('step-assessment-type').classList.add('hidden');
+            document.getElementById('step-consent').classList.remove('hidden');
+        }
+        
+        // Check for duplicate client
+        async function checkClientDuplicate() {
+            const firstName = document.getElementById('client-first-name').value.trim();
+            const lastName = document.getElementById('client-last-name').value.trim();
+            const dob = document.getElementById('client-dob').value;
+            
+            if (!firstName || !lastName) {
+                showAlert('Please enter both first and last name', 'warning');
+                return;
+            }
+            
+            const result = await checkDuplicate(firstName, lastName, dob || null);
+            
+            if (result.exists) {
+                // Show duplicate warning
+                document.getElementById('duplicate-message').textContent = 
+                    `A client named ${firstName} ${lastName} has already been assessed ${result.client.assessment_count || 0} time(s).`;
+                document.getElementById('step-client').classList.add('hidden');
+                document.getElementById('step-duplicate-warning').classList.remove('hidden');
+            } else {
+                // Create new client and proceed
+                await createNewClient();
+            }
+        }
+        
+        async function proceedAnyway() {
+            await createNewClient();
+        }
+        
+        async function createNewClient() {
+            const firstName = document.getElementById('client-first-name').value.trim();
+            const lastName = document.getElementById('client-last-name').value.trim();
+            const dob = document.getElementById('client-dob').value;
+            
+            const result = await createClient(firstName, lastName, dob || null);
+            
+            if (result.success) {
+                clientId = result.client_id;
+                showAlert('Client information saved', 'success');
+                
+                // Proceed to consent
+                document.getElementById('step-client').classList.add('hidden');
+                document.getElementById('step-duplicate-warning').classList.add('hidden');
+                document.getElementById('step-consent').classList.remove('hidden');
+            } else {
+                showAlert(result.message || 'Error creating client', 'danger');
+            }
+        }
+        
+        function updateConsentType(type) {
+            consentType = type;
+            document.getElementById('consent-continue-btn').disabled = false;
+        }
+        
+        async function proceedToAssessmentType() {
+            if (!consentType) {
+                showAlert('Please select a consent option', 'warning');
+                return;
+            }
+            
+            // Save consent
+            const fullConsent = consentType === 'full';
+            const partialConsent = consentType === 'partial';
+            
+            const result = await saveConsent(clientId, fullConsent, partialConsent);
+            
+            if (result.success) {
+                document.getElementById('step-consent').classList.add('hidden');
+                document.getElementById('step-assessment-type').classList.remove('hidden');
+            } else {
+                showAlert(result.message || 'Error saving consent', 'danger');
+            }
+        }
+        
+        function selectAssessmentType(type, element) {
+            // Remove selected class from all cards
+            document.querySelectorAll('.assessment-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked card
+            element.classList.add('selected');
+            selectedAssessmentType = type;
+            
+            document.getElementById('start-assessment-btn').disabled = false;
+        }
+        
+        async function startSelectedAssessment() {
+            if (!selectedAssessmentType) {
+                showAlert('Please select an assessment type', 'warning');
+                return;
+            }
+            
+            const result = await startAssessment(clientId, selectedStaffId, selectedAssessmentType);
+            
+            if (result.success) {
+                // Redirect to appropriate assessment page
+                const assessmentId = result.assessment_id;
+                window.location.href = `assessment-${selectedAssessmentType.toLowerCase()}.html?id=${assessmentId}`;
+            } else {
+                showAlert(result.message || 'Error starting assessment', 'danger');
+            }
+        }
+    </script>
+</body>
+</html>
