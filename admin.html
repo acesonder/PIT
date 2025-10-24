@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - OUTSINC PIT</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="admin-page">
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo-placeholder">OI</div>
+                <div class="site-title">
+                    <h1>OUTSINC Admin</h1>
+                    <p>PIT Count Management</p>
+                </div>
+            </div>
+            <nav class="nav-links">
+                <a href="admin.html" class="btn btn-primary">Dashboard</a>
+                <a href="admin-assessments.html" class="btn btn-outline">Assessments</a>
+                <a href="admin-widgets.html" class="btn btn-outline">Widgets</a>
+                <a href="admin-staff.html" class="btn btn-outline">Staff</a>
+                <button onclick="adminLogout()" class="btn btn-danger">Logout</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="admin-header">
+            <h1>Admin Dashboard</h1>
+            <div id="last-updated" class="last-updated"></div>
+        </div>
+
+        <!-- Statistics Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="stat-total">0</div>
+                <div class="stat-label">Total Assessments</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-value" id="stat-clients">0</div>
+                <div class="stat-label">Unique Clients</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-value" id="stat-today">0</div>
+                <div class="stat-label">Today</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-value" id="stat-week">0</div>
+                <div class="stat-label">This Week</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-value" id="stat-month">0</div>
+                <div class="stat-label">This Month</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-value" id="stat-short">0</div>
+                <div class="stat-label">Short Assessments</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-value" id="stat-medium">0</div>
+                <div class="stat-label">Medium Assessments</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-value" id="stat-hard">0</div>
+                <div class="stat-label">Hard Assessments</div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <section class="form-section">
+            <h2>Quick Actions</h2>
+            <div class="flex gap-20" style="flex-wrap: wrap;">
+                <a href="new-assessment.html" class="btn btn-primary">+ New Assessment</a>
+                <a href="admin-assessments.html" class="btn btn-secondary">View All Assessments</a>
+                <a href="admin-widgets.html" class="btn btn-secondary">Manage Widgets</a>
+                <a href="admin-staff.html" class="btn btn-secondary">Manage Staff</a>
+                <button onclick="exportAllData()" class="btn btn-outline">📊 Export All Data (CSV)</button>
+                <button onclick="generateReport()" class="btn btn-outline">📄 Generate Report</button>
+            </div>
+        </section>
+
+        <!-- Recent Assessments -->
+        <section class="form-section">
+            <h2>Recent Assessments</h2>
+            <div id="recent-assessments-table">
+                <p style="text-align: center; padding: 20px;">Loading...</p>
+            </div>
+        </section>
+
+        <!-- System Information -->
+        <section class="form-section">
+            <h2>System Information</h2>
+            <div class="widgets-grid">
+                <div class="widget">
+                    <div class="widget-title">Database Status</div>
+                    <div class="widget-value" style="font-size: 24px; color: var(--success-color);">✓ Connected</div>
+                </div>
+                
+                <div class="widget">
+                    <div class="widget-title">Active Staff Members</div>
+                    <div class="widget-value" id="active-staff-count">5</div>
+                </div>
+                
+                <div class="widget">
+                    <div class="widget-title">Data Quality</div>
+                    <div class="widget-value" style="font-size: 24px; color: var(--success-color);">98%</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', async function() {
+            await checkAdminSession();
+            await displayDashboardStats();
+            await loadRecentAssessments();
+        });
+        
+        async function loadRecentAssessments() {
+            const assessments = await loadAllAssessments();
+            const recentAssessments = assessments.slice(0, 10); // Get last 10
+            
+            const container = document.getElementById('recent-assessments-table');
+            if (recentAssessments.length === 0) {
+                container.innerHTML = '<p style="text-align: center; padding: 20px;">No assessments found</p>';
+            } else {
+                let tableHTML = `
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Client</th>
+                                <th>Type</th>
+                                <th>Staff</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                recentAssessments.forEach(assessment => {
+                    const statusBadge = assessment.is_complete 
+                        ? '<span style="color: green;">✓ Complete</span>' 
+                        : '<span style="color: orange;">○ In Progress</span>';
+                        
+                    tableHTML += `
+                        <tr>
+                            <td>${assessment.id}</td>
+                            <td>${assessment.first_name} ${assessment.last_name}</td>
+                            <td>${assessment.assessment_type}</td>
+                            <td>${assessment.staff_first_name} ${assessment.staff_last_name}</td>
+                            <td>${new Date(assessment.created_at).toLocaleDateString()}</td>
+                            <td>${statusBadge}</td>
+                            <td>
+                                <a href="view-assessment.html?id=${assessment.id}" class="btn btn-primary" style="padding: 5px 10px; font-size: 12px;">View</a>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                tableHTML += `
+                        </tbody>
+                    </table>
+                `;
+                
+                container.innerHTML = tableHTML;
+            }
+        }
+        
+        async function exportAllData() {
+            const assessments = await loadAllAssessments();
+            if (assessments.length === 0) {
+                showAlert('No data to export', 'warning');
+                return;
+            }
+            
+            // Flatten assessment data for CSV
+            const flatData = assessments.map(a => ({
+                id: a.id,
+                client_name: `${a.first_name} ${a.last_name}`,
+                type: a.assessment_type,
+                staff: `${a.staff_first_name} ${a.staff_last_name}`,
+                date: a.created_at,
+                complete: a.is_complete,
+                data: JSON.stringify(a.assessment_data)
+            }));
+            
+            exportToCSV(flatData, `pit-count-export-${new Date().toISOString().split('T')[0]}.csv`);
+            showAlert('Data exported successfully', 'success');
+        }
+        
+        function generateReport() {
+            // Open report page or trigger report generation
+            window.open('admin-report.html', '_blank');
+        }
+    </script>
+</body>
+</html>

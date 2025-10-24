@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PIT Count - Cobourg & Northumberland</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo-placeholder">OI</div>
+                <div class="site-title">
+                    <h1>OUTSINC</h1>
+                    <p>Point-in-Time Count 2025</p>
+                </div>
+            </div>
+            <nav class="nav-links no-print">
+                <a href="new-assessment.html" class="btn btn-primary">New Assessment</a>
+                <a href="admin-login.html" class="btn btn-outline">Admin Portal</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Hero Section with Count -->
+        <section class="hero">
+            <div class="hero-image">
+                <p><strong>Image Description:</strong> A diverse group of community outreach workers talking with people experiencing homelessness in Cobourg, Ontario. The scene shows compassion and connection, set in a downtown area with historic buildings in the background. People of various ages and backgrounds are engaged in conversation, depicting the reality of homelessness and the caring response of the community.</p>
+            </div>
+            
+            <div class="count-display">
+                <h2>People Unhoused in Our Community</h2>
+                <div class="count-number" id="total-count">0</div>
+                <div class="count-label">Individuals Counted in Current PIT Assessment</div>
+            </div>
+        </section>
+
+        <!-- What is PIT Section -->
+        <section class="info-section">
+            <h2>📊 What is a Point-in-Time (PIT) Count?</h2>
+            
+            <p>A <strong>Point-in-Time (PIT) Count</strong> is a comprehensive survey conducted on a single night to count the number of people experiencing homelessness in a specific community. This count provides crucial data that helps us understand the scope of homelessness and plan appropriate services.</p>
+            
+            <h3>Why We're Conducting This Count</h3>
+            <p>The Cobourg and Northumberland community is planning a <strong>warming room for the 2026 winter season</strong>. To ensure we provide adequate support and services, we need accurate data about:</p>
+            <ul>
+                <li>The number of people experiencing homelessness in our area</li>
+                <li>The demographics and specific needs of our unhoused neighbors</li>
+                <li>The types of services that would be most beneficial</li>
+                <li>The capacity required for the warming room and support services</li>
+            </ul>
+            
+            <h3>What Makes This Count "High-Resolution"?</h3>
+            <p>An "expensive" or high-resolution PIT questionnaire means we invest heavily in data quality, comprehensive analytics, and service matching. Unlike basic counts that only capture minimum federal requirements, our detailed assessment collects:</p>
+            <ul>
+                <li><strong>Demographic information</strong> - Age, gender identity, Indigenous status, veteran status</li>
+                <li><strong>Housing history</strong> - Duration and frequency of homelessness</li>
+                <li><strong>Health and wellness</strong> - Physical and mental health needs</li>
+                <li><strong>Service needs</strong> - What support services would help most</li>
+                <li><strong>Barriers to housing</strong> - Specific challenges preventing stable housing</li>
+            </ul>
+            
+            <h3>Your Privacy Matters</h3>
+            <p>All participation is <strong>voluntary and confidential</strong>. You can choose to:</p>
+            <ul>
+                <li><strong>Full Consent:</strong> Share your complete information with Northumberland County to receive personalized support</li>
+                <li><strong>Partial Consent:</strong> Provide demographic information (age, gender) without identifying details</li>
+                <li><strong>Skip Any Question:</strong> Every question is optional with "Prefer not to say" or "Skip" options</li>
+            </ul>
+            
+            <h3>Three Assessment Options</h3>
+            <p>We offer three assessment lengths to respect your time while gathering important data:</p>
+            <ul>
+                <li><strong>SHORT (6-10 minutes):</strong> Essential questions only - who, where, basic demographics</li>
+                <li><strong>MEDIUM (12-20 minutes):</strong> Balanced assessment including barriers and service needs</li>
+                <li><strong>HARD (25-40 minutes):</strong> Comprehensive survey for detailed service planning</li>
+            </ul>
+        </section>
+
+        <!-- Live Statistics -->
+        <section class="info-section">
+            <h2>📈 Live Count Statistics</h2>
+            <div id="widgets-container" class="widgets-grid">
+                <!-- Widgets will be loaded here dynamically -->
+                <div class="widget">
+                    <div class="widget-header">
+                        <span class="widget-title">Loading...</span>
+                    </div>
+                    <div class="widget-value">-</div>
+                    <div class="widget-description">Fetching data...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action -->
+        <section class="info-section text-center">
+            <h2>🤝 Get Involved</h2>
+            <p style="font-size: 18px; margin-bottom: 30px;">Help us build a more accurate picture of homelessness in our community. If you are experiencing homelessness or know someone who is, please participate in our count.</p>
+            <a href="new-assessment.html" class="btn btn-primary" style="font-size: 18px; padding: 15px 40px;">Start New Assessment</a>
+        </section>
+
+        <!-- Contact Information -->
+        <section class="info-section">
+            <h2>📞 Contact OUTSINC</h2>
+            <p>For more information about the PIT count, warming room planning, or available services:</p>
+            <ul>
+                <li><strong>Organization:</strong> OUTSINC (Outreach Services, Inc.)</li>
+                <li><strong>Serving:</strong> Cobourg, Ontario and surrounding Northumberland County</li>
+                <li><strong>Email:</strong> info@outsinc.ca</li>
+                <li><strong>Phone:</strong> [Contact Number]</li>
+            </ul>
+            <p style="margin-top: 20px;"><em>This initiative is conducted in partnership with Northumberland County to ensure adequate support for our community members experiencing homelessness.</em></p>
+        </section>
+
+        <!-- Last Updated -->
+        <div class="last-updated" id="last-updated">
+            Last updated: Loading...
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

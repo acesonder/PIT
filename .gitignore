@@ -1,0 +1,49 @@
+# PIT Count .gitignore
+
+# Database configuration (if contains sensitive credentials)
+# Uncomment if you want to exclude config from git
+# config/config.php
+
+# Uploaded files
+uploads/
+*.log
+
+# System files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Temporary files
+/tmp/
+*.tmp
+*.bak
+
+# Node modules (if you add any build tools later)
+node_modules/
+
+# Vendor directories (if you add Composer later)
+vendor/
+
+# Environment files
+.env
+.env.local
+
+# Backup files
+*.sql.backup
+backup/
+
+# Error logs
+error_log
+php_errors.log
+
+# Cache
+cache/
+*.cache

@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHORT Assessment - OUTSINC PIT</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo-placeholder">OI</div>
+                <div class="site-title">
+                    <h1>SHORT PIT Assessment</h1>
+                    <p>6-10 minutes • All questions optional</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Progress Bar -->
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+        </div>
+
+        <form id="assessment-form" onsubmit="handleSubmit(event)">
+            <!-- Section 1: Screening & Consent -->
+            <div class="form-section" data-section="1">
+                <div class="section-title">📋 Section 1: Screening & Consent</div>
+                
+                <div class="form-group">
+                    <label>1. Have you already completed this survey with another person today?</label>
+                    <div class="radio-group">
+                        <label class="radio-item">
+                            <input type="radio" name="already_completed" value="Yes">
+                            <span>Yes</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="already_completed" value="No">
+                            <span>No</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="already_completed" value="Prefer not to say">
+                            <span>Prefer not to say</span>
+                        </label>
+                    </div>
+                    <button type="button" class="skip-button" onclick="skipQuestion('already_completed')">Skip</button>
+                </div>
+
+                <div class="form-group">
+                    <label>2. Are you 16 years of age or older?</label>
+                    <div class="radio-group">
+                        <label class="radio-item">
+                            <input type="radio" name="age_16_plus" value="Yes">
+                            <span>Yes</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="age_16_plus" value="No">
+                            <span>No</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="age_16_plus" value="Prefer not to say">
+                            <span>Prefer not to say</span>
+                        </label>
+                    </div>
+                    <button type="button" class="skip-button" onclick="skipQuestion('age_16_plus')">Skip</button>
+                </div>
+
+                <div class="form-group">
+                    <label>3. Do you agree to participate in this anonymous homelessness count?</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="survey_consent" value="I consent">
+                            <span>I consent</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="survey_consent" value="I do not consent">
+                            <span>I do not consent</span>
+                        </label>
+                    </div>
+                    <button type="button" class="skip-button" onclick="skipQuestion('survey_consent')">Skip</button>
+                </div>
+            </div>
+
+            <!-- Section 2: Where Are You Staying Tonight? -->
+            <div class="form-section" data-section="2">
+                <div class="section-title">🏠 Section 2: Where Are You Staying Tonight?</div>
+                
+                <div class="form-group">
+                    <label>4. Where are you staying tonight?</label>
+                    <select name="location_type" class="form-control">
+                        <option value="">Select...</option>
+                        <option value="Shelter">Shelter</option>
+                        <option value="Transitional housing">Transitional housing</option>
+                        <option value="Motel">Motel</option>
+                        <option value="Friend's place">Friend's place or family's place</option>
+                        <option value="Outside">Outside (street, park)</option>
+                        <option value="Vehicle">Vehicle (car, van)</option>
+                        <option value="Encampment">Encampment</option>
+                        <option value="Abandoned building">Abandoned building</option>
+                        <option value="Other">Other</option>
+                        <option value="Prefer not to say">Prefer not to say</option>
+                    </select>
+                    <button type="button" class="skip-button" onclick="skipQuestion('location_type')">Skip</button>
+                </div>
+
+                <div class="form-group">
+                    <label>5. Is this location safe and intended for human habitation?</label>
+                    <div class="radio-group">
+                        <label class="radio-item">
+                            <input type="radio" name="location_safe" value="Yes">
+                            <span>Yes</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="location_safe" value="No">
+                            <span>No</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="location_safe" value="Unsure">
+                            <span>Unsure</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="location_safe" value="Prefer not to say">
+                            <span>Prefer not to say</span>
+                        </label>
+                    </div>
+                    <button type="button" class="skip-button" onclick="skipQuestion('location_safe')">Skip</button>
+                </div>
+
+                <div class="form-group">
+                    <label>6. Do you have a permanent place to return to tonight?</label>
+                    <div class="radio-group">
+                        <label class="radio-item">
+                            <input type="radio" name="permanent_place" value="Yes">
+                            <span>Yes</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="permanent_place" value="No">
+                            <span>No</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="permanent_place" value="Prefer not to say">
+                            <span>Prefer not to say</span>
+                        </label>
+                    </div>
+                    <button type="button" class="skip-button" onclick="skipQuestion('permanent_place')">Skip</button>
+                </div>
+            </div>
+
+            <!-- Section 3: Homelessness Duration -->
+            <div class="form-section" data-section="3">
+                <div class="section-title">⏰ Section 3: Homelessness History</div>
+                
+                <div class="form-group">
+                    <label>7. How long have you been without stable housing this time?</label>
+                    <select name="duration" class="form-control">
+                        <option value="">Select...</option>
+                        <option value="Less than 1 month">Less than 1 month</option>
+                        <option value="1–3 months">1–3 months</option>
+                        <option value="4–6 months">4–6 months</option>
+                        <option value="7–12 months">7–12 months</option>
+                        <option value="More than 1 year">More than 1 year</option>
+                        <option value="Prefer not to say">Prefer not to say</option>
+                    </select>
+                    <button type="button" class="skip-button" onclick="skipQuestion('duration')">Skip</button>
+                </div>
+
+                <div class="form-group">
+                    <label>8. How many times have you been homeless in the past year?</label>
+                    <input type="number" name="homeless_times" class="form-control" min="0" max="20" placeholder="Enter number">
+                    <button type="button" class="skip-button" onclick="skipQuestion('homeless_times')">Skip</button>
+                </div>
+
+                <div class="form-group">
+                    <label>9. Before losing your last housing, where were you living?</label>
+                    <select name="previous_housing" class="form-control">
+                        <option value="">Select...</option>
+                        <option value="Own or rented home">Own or rented home</option>
+                        <option value="Living with family or friends">Living with family or friends</option>
+                        <option value="Shelter">Shelter</option>
+                        <option value="Transitional housing">Transitional housing</option>
+                        <option value="Institution">Institution (hospital, jail, group home)</option>
+                        <option value="Other">Other</option>
+                        <option value="Prefer not to say">Prefer not to say</option>
+                    </select>
+                    <button type="button" class="skip-button" onclick="skipQuestion('previous_housing')">Skip</button>
+                </div>
+            </div>
+
+            <!-- Section 4: Demographics -->
+            <div class="form-section" data-section="4">
+                <div class="section-title">👤 Section 4: Demographics</div>
+                
+                <div class="form-group">
+                    <label>10. What is your age?</label>
+                    <input type="number" name="age" class="form-control" min="16" max="120" placeholder="Enter age in years">
+                    <button type="button" class="skip-button" onclick="skipQuestion('age')">Skip</button>
+                </div>
+
+                <div class="form-group">
+                    <label>11. What gender do you identify as?</label>
+                    <select name="gender" class="form-control">
+                        <option value="">Select...</option>
+                        <option value="Man">Man</option>
+                        <option value="Woman">Woman</option>
+                        <option value="Non-binary">Non-binary</option>
+                        <option value="Two-Spirit">Two-Spirit</option>
+                        <option value="Prefer to self-describe">Prefer to self-describe</option>
+                        <option value="Prefer not to say">Prefer not to say</option>
+                    </select>
+                    <button type="button" class="skip-button" onclick="skipQuestion('gender')">Skip</button>
+                </div>
+
+                <div class="form-group">
+                    <label>12. Do you identify as Indigenous (First Nations, Métis, Inuit)?</label>
+                    <div class="radio-group">
+                        <label class="radio-item">
+                            <input type="radio" name="indigenous" value="Yes" onchange="showIndigenousGroup()">
+                            <span>Yes</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="indigenous" value="No" onchange="hideIndigenousGroup()">
+                            <span>No</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="indigenous" value="Prefer not to say" onchange="hideIndigenousGroup()">
+                            <span>Prefer not to say</span>
+                        </label>
+                    </div>
+                    <button type="button" class="skip-button" onclick="skipQuestion('indigenous')">Skip</button>
+                </div>
+
+                <div class="form-group hidden" id="indigenous-group">
+                    <label>13. If yes, which group?</label>
+                    <select name="indigenous_group" class="form-control">
+                        <option value="">Select...</option>
+                        <option value="First Nations">First Nations</option>
+                        <option value="Métis">Métis</option>
+                        <option value="Inuit">Inuit</option>
+                        <option value="Other Indigenous">Other Indigenous</option>
+                        <option value="Prefer not to say">Prefer not to say</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>14. What racial or ethnic group best describes you? (Select all that apply)</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="ethnicity" value="White">
+                            <span>White</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="ethnicity" value="Black">
+                            <span>Black</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="ethnicity" value="Indigenous">
+                            <span>Indigenous</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="ethnicity" value="East Asian">
+                            <span>East Asian</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="ethnicity" value="South Asian">
+                            <span>South Asian</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="ethnicity" value="Middle Eastern">
+                            <span>Middle Eastern</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="ethnicity" value="Latin American">
+                            <span>Latin American</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="ethnicity" value="Mixed">
+                            <span>Mixed</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="ethnicity" value="Other">
+                            <span>Other</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="ethnicity" value="Prefer not to say">
+                            <span>Prefer not to say</span>
+                        </label>
+                    </div>
+                    <button type="button" class="skip-button" onclick="skipQuestion('ethnicity')">Skip</button>
+                </div>
+
+                <div class="form-group">
+                    <label>15. Were you born in Canada?</label>
+                    <div class="radio-group">
+                        <label class="radio-item">
+                            <input type="radio" name="born_canada" value="Yes">
+                            <span>Yes</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="born_canada" value="No">
+                            <span>No</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="born_canada" value="Prefer not to say">
+                            <span>Prefer not to say</span>
+                        </label>
+                    </div>
+                    <button type="button" class="skip-button" onclick="skipQuestion('born_canada')">Skip</button>
+                </div>
+
+                <div class="form-group">
+                    <label>16. Have you ever served in the Canadian Armed Forces or RCMP?</label>
+                    <div class="radio-group">
+                        <label class="radio-item">
+                            <input type="radio" name="veteran" value="Yes">
+                            <span>Yes</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="veteran" value="No">
+                            <span>No</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="veteran" value="Prefer not to say">
+                            <span>Prefer not to say</span>
+                        </label>
+                    </div>
+                    <button type="button" class="skip-button" onclick="skipQuestion('veteran')">Skip</button>
+                </div>
+            </div>
+
+            <!-- Section 5: Household -->
+            <div class="form-section" data-section="5">
+                <div class="section-title">👨‍👩‍👧 Section 5: Household Composition</div>
+                
+                <div class="form-group">
+                    <label>17. Are you staying with a partner or family members tonight?</label>
+                    <div class="radio-group">
+                        <label class="radio-item">
+                            <input type="radio" name="with_family" value="Yes">
+                            <span>Yes</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="with_family" value="No">
+                            <span>No</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="with_family" value="Prefer not to say">
+                            <span>Prefer not to say</span>
+                        </label>
+                    </div>
+                    <button type="button" class="skip-button" onclick="skipQuestion('with_family')">Skip</button>
+                </div>
+
+                <div class="form-group">
+                    <label>18. How many children (under 18) are with you?</label>
+                    <input type="number" name="children_count" class="form-control" min="0" max="20" placeholder="Enter number">
+                    <button type="button" class="skip-button" onclick="skipQuestion('children_count')">Skip</button>
+                </div>
+            </div>
+
+            <!-- Section 6: Services & Contact -->
+            <div class="form-section" data-section="6">
+                <div class="section-title">🧭 Section 6: Services & Contact</div>
+                
+                <div class="form-group">
+                    <label>19. Have you used any of the following in the past month? (Select all that apply)</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="services_used" value="Shelter">
+                            <span>Shelter</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="services_used" value="Outreach program">
+                            <span>Outreach program</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="services_used" value="Food bank">
+                            <span>Food bank</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="services_used" value="Health service">
+                            <span>Health service</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="services_used" value="Harm-reduction program">
+                            <span>Harm-reduction program</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="services_used" value="None">
+                            <span>None</span>
+                        </label>
+                    </div>
+                    <button type="button" class="skip-button" onclick="skipQuestion('services_used')">Skip</button>
+                </div>
+
+                <div class="form-group">
+                    <label>20. Would you like someone to contact you about housing or supports?</label>
+                    <div class="radio-group">
+                        <label class="radio-item">
+                            <input type="radio" name="want_contact" value="Yes" onchange="showContactMethod()">
+                            <span>Yes</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="want_contact" value="No" onchange="hideContactMethod()">
+                            <span>No</span>
+                        </label>
+                    </div>
+                    <button type="button" class="skip-button" onclick="skipQuestion('want_contact')">Skip</button>
+                </div>
+
+                <div class="form-group hidden" id="contact-method-group">
+                    <label>21. If yes, what's the best way to reach you?</label>
+                    <select name="contact_method" class="form-control">
+                        <option value="">Select...</option>
+                        <option value="Phone">Phone</option>
+                        <option value="Email">Email</option>
+                        <option value="Outreach worker">Through outreach worker</option>
+                        <option value="Friend">Through a friend</option>
+                        <option value="No contact information available">No contact information available</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Section 7: Interview Record -->
+            <div class="form-section" data-section="7">
+                <div class="section-title">📍 Section 7: Interview Record</div>
+                
+                <div class="form-group">
+                    <label>22. Where exactly are you sleeping tonight (nearest intersection or landmark)?</label>
+                    <input type="text" name="exact_location" class="form-control" placeholder="e.g., King St & Division St, Victoria Park">
+                    <button type="button" class="skip-button" onclick="skipQuestion('exact_location')">Skip</button>
+                </div>
+
+                <div class="form-group">
+                    <label>23. Municipality or area</label>
+                    <select name="municipality" class="form-control">
+                        <option value="">Select...</option>
+                        <option value="Cobourg">Cobourg</option>
+                        <option value="Port Hope">Port Hope</option>
+                        <option value="Brighton">Brighton</option>
+                        <option value="Campbellford">Campbellford</option>
+                        <option value="Other">Other Northumberland area</option>
+                    </select>
+                    <button type="button" class="skip-button" onclick="skipQuestion('municipality')">Skip</button>
+                </div>
+
+                <div class="form-group">
+                    <label>24. Additional notes or comments (optional)</label>
+                    <textarea name="notes" class="form-control" rows="4" placeholder="Any additional information..."></textarea>
+                </div>
+            </div>
+
+            <!-- Submit Section -->
+            <div class="form-section">
+                <div style="text-align: center; padding: 30px 0;">
+                    <button type="button" onclick="saveProgress()" class="btn btn-outline" style="margin-right: 15px;">
+                        💾 Save Progress
+                    </button>
+                    <button type="submit" class="btn btn-success btn-lg">
+                        ✓ Complete Assessment
+                    </button>
+                </div>
+                <p style="text-align: center; color: #666; margin-top: 15px;">
+                    Thank you for participating in this Point-in-Time count!
+                </p>
+            </div>
+        </form>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        let assessmentForm;
+        let assessmentId;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get assessment ID from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            assessmentId = urlParams.get('id');
+            
+            if (!assessmentId) {
+                showAlert('No assessment ID provided', 'danger');
+                setTimeout(() => window.location.href = 'new-assessment.html', 2000);
+                return;
+            }
+            
+            // Initialize form
+            assessmentForm = new AssessmentForm('SHORT', assessmentId, null, null);
+            assessmentForm.totalSections = 7;
+            
+            // Update progress as user fills form
+            document.getElementById('assessment-form').addEventListener('change', function() {
+                updateProgressBar();
+            });
+            
+            // Auto-save every 2 minutes
+            setInterval(() => saveProgress(), 120000);
+        });
+        
+        function updateProgressBar() {
+            const form = document.getElementById('assessment-form');
+            const inputs = form.querySelectorAll('input, select, textarea');
+            const filled = Array.from(inputs).filter(input => {
+                if (input.type === 'checkbox' || input.type === 'radio') {
+                    return input.checked;
+                }
+                return input.value.trim() !== '';
+            }).length;
+            
+            const progress = (filled / inputs.length) * 100;
+            document.getElementById('progress-fill').style.width = `${progress}%`;
+        }
+        
+        function showIndigenousGroup() {
+            document.getElementById('indigenous-group').classList.remove('hidden');
+        }
+        
+        function hideIndigenousGroup() {
+            document.getElementById('indigenous-group').classList.add('hidden');
+        }
+        
+        function showContactMethod() {
+            document.getElementById('contact-method-group').classList.remove('hidden');
+        }
+        
+        function hideContactMethod() {
+            document.getElementById('contact-method-group').classList.add('hidden');
+        }
+        
+        function skipQuestion(questionName) {
+            const elements = document.getElementsByName(questionName);
+            elements.forEach(el => {
+                if (el.type === 'checkbox' || el.type === 'radio') {
+                    el.checked = false;
+                } else {
+                    el.value = 'SKIPPED';
+                }
+            });
+            showAlert(`Question skipped`, 'info');
+        }
+        
+        async function saveProgress() {
+            const result = await assessmentForm.save(false);
+            if (result.success) {
+                showAlert('Progress saved', 'success');
+            } else {
+                showAlert('Error saving progress', 'danger');
+            }
+        }
+        
+        async function handleSubmit(event) {
+            event.preventDefault();
+            
+            if (confirm('Are you sure you want to complete this assessment? Once submitted, it will be marked as complete.')) {
+                const result = await assessmentForm.save(true);
+                if (result.success) {
+                    showAlert('Assessment completed successfully!', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'assessment-complete.html';
+                    }, 2000);
+                } else {
+                    showAlert('Error completing assessment: ' + result.message, 'danger');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

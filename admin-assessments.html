@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Assessments - OUTSINC PIT</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="admin-page">
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo-placeholder">OI</div>
+                <div class="site-title">
+                    <h1>OUTSINC Admin</h1>
+                    <p>Assessment Management</p>
+                </div>
+            </div>
+            <nav class="nav-links">
+                <a href="admin.html" class="btn btn-outline">← Dashboard</a>
+                <button onclick="adminLogout()" class="btn btn-danger">Logout</button>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1>All Assessments</h1>
+        
+        <!-- Filter Tabs -->
+        <div class="form-section">
+            <div class="flex gap-10" style="flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="filterAssessments(null)">All</button>
+                <button class="btn btn-outline" onclick="filterAssessments('SHORT')">Short</button>
+                <button class="btn btn-outline" onclick="filterAssessments('MEDIUM')">Medium</button>
+                <button class="btn btn-outline" onclick="filterAssessments('HARD')">Hard</button>
+            </div>
+        </div>
+
+        <!-- Assessments Table -->
+        <section class="form-section">
+            <div id="assessments-table-container">
+                <p style="text-align: center; padding: 20px;">Loading...</p>
+            </div>
+        </section>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            await checkAdminSession();
+            await filterAssessments(null);
+        });
+        
+        async function filterAssessments(type) {
+            await displayAssessmentsTable('assessments-table-container', type);
+        }
+        
+        function viewAssessment(id) {
+            window.location.href = `view-assessment.html?id=${id}`;
+        }
+    </script>
+</body>
+</html>

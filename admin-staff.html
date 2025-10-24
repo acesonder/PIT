@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Staff - OUTSINC PIT</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="admin-page">
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo-placeholder">OI</div>
+                <div class="site-title">
+                    <h1>OUTSINC Admin</h1>
+                    <p>Staff Management</p>
+                </div>
+            </div>
+            <nav class="nav-links">
+                <a href="admin.html" class="btn btn-outline">← Dashboard</a>
+                <button onclick="adminLogout()" class="btn btn-danger">Logout</button>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1>Manage Outreach Staff</h1>
+        
+        <!-- Add New Staff -->
+        <section class="form-section">
+            <h2>Add New Staff Member</h2>
+            <form id="add-staff-form" onsubmit="handleAddStaff(event)">
+                <div class="flex gap-20" style="align-items: flex-end;">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="staff-first-name">First Name</label>
+                        <input type="text" id="staff-first-name" class="form-control" required>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label for="staff-last-name">Last Name</label>
+                        <input type="text" id="staff-last-name" class="form-control" required>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-primary">+ Add Staff</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <!-- Current Staff List -->
+        <section class="form-section">
+            <h2>Current Staff Members</h2>
+            <div id="staff-list-container">
+                <p style="text-align: center; padding: 20px;">Loading...</p>
+            </div>
+        </section>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            await checkAdminSession();
+            await loadStaffList();
+        });
+        
+        async function loadStaffList() {
+            const staff = await loadStaff();
+            const container = document.getElementById('staff-list-container');
+            
+            if (staff.length === 0) {
+                container.innerHTML = '<p style="text-align: center; padding: 20px;">No staff members found</p>';
+            } else {
+                let tableHTML = `
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Status</th>
+                                <th>Added</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                staff.forEach(member => {
+                    const statusBadge = member.is_active 
+                        ? '<span style="color: green;">✓ Active</span>' 
+                        : '<span style="color: red;">✗ Inactive</span>';
+                        
+                    tableHTML += `
+                        <tr>
+                            <td>${member.id}</td>
+                            <td>${member.first_name}</td>
+                            <td>${member.last_name}</td>
+                            <td>${statusBadge}</td>
+                            <td>${new Date(member.created_at).toLocaleDateString()}</td>
+                            <td>
+                                ${member.is_active ? 
+                                    `<button class="btn btn-danger" style="padding: 5px 10px; font-size: 12px;" onclick="removeStaffMember(${member.id})">Remove</button>` :
+                                    `<span style="color: #999;">Removed</span>`
+                                }
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                tableHTML += `
+                        </tbody>
+                    </table>
+                `;
+                
+                container.innerHTML = tableHTML;
+            }
+        }
+        
+        async function handleAddStaff(event) {
+            event.preventDefault();
+            
+            const firstName = document.getElementById('staff-first-name').value.trim();
+            const lastName = document.getElementById('staff-last-name').value.trim();
+            
+            const result = await apiRequest('add_staff', {
+                first_name: firstName,
+                last_name: lastName
+            });
+            
+            if (result.success) {
+                showAlert('Staff member added successfully', 'success');
+                document.getElementById('add-staff-form').reset();
+                await loadStaffList();
+            } else {
+                showAlert(result.message || 'Error adding staff', 'danger');
+            }
+        }
+        
+        async function removeStaffMember(staffId) {
+            if (confirm('Are you sure you want to remove this staff member? They will be deactivated but their assessments will remain.')) {
+                const result = await apiRequest('remove_staff', { staff_id: staffId });
+                
+                if (result.success) {
+                    showAlert('Staff member removed', 'success');
+                    await loadStaffList();
+                } else {
+                    showAlert(result.message || 'Error removing staff', 'danger');
+                }
+            }
+        }
+    </script>
+</body>
+</html>
