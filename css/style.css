@@ -750,6 +750,20 @@ textarea.form-control {
     color: var(--dark-color);
 }
 
+/* Signature Field */
+.signature-field {
+    font-family: 'Brush Script MT', cursive, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 18px;
+    font-style: italic;
+    border: 2px solid var(--primary-color);
+    background-color: #fffef8;
+}
+
+.signature-field:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.1);
+}
+
 /* Last Updated */
 .last-updated {
     text-align: center;
