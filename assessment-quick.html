@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QUICK PIT Assessment - OUTSINC</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo-placeholder">OI</div>
+                <div class="site-title">
+                    <h1>QUICK PIT Assessment</h1>
+                    <p>2-3 minutes • Quick Count</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Progress Bar -->
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+        </div>
+
+        <form id="assessment-form" onsubmit="handleSubmit(event)">
+            <!-- Personal Information Section -->
+            <div class="form-section" data-section="1">
+                <div class="section-title">👤 Personal Information</div>
+                
+                <div class="form-group">
+                    <label for="first_name">First Name *</label>
+                    <input type="text" id="first_name" name="first_name" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="last_name">Last Name *</label>
+                    <input type="text" id="last_name" name="last_name" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="gender">Gender *</label>
+                    <select id="gender" name="gender" class="form-control" required>
+                        <option value="">Select...</option>
+                        <option value="Man">Man</option>
+                        <option value="Woman">Woman</option>
+                        <option value="Non-binary">Non-binary</option>
+                        <option value="Two-Spirit">Two-Spirit</option>
+                        <option value="Prefer to self-describe">Prefer to self-describe</option>
+                        <option value="Prefer not to say">Prefer not to say</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="date_of_birth">Date of Birth (Optional)</label>
+                    <input type="date" id="date_of_birth" name="date_of_birth" class="form-control">
+                    <small style="color: #666;">Or provide age below if you prefer</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="age">Age (Optional)</label>
+                    <input type="number" id="age" name="age" class="form-control" min="16" max="120" placeholder="Enter age in years">
+                    <small style="color: #666;">Only fill this if you didn't provide date of birth</small>
+                </div>
+            </div>
+
+            <!-- Current Housing Situation -->
+            <div class="form-section" data-section="2">
+                <div class="section-title">🏠 Current Housing Situation</div>
+                
+                <div class="form-group">
+                    <label for="currently_staying">Currently, staying: *</label>
+                    <select id="currently_staying" name="currently_staying" class="form-control" required>
+                        <option value="">Select...</option>
+                        <option value="Transition House">Transition House</option>
+                        <option value="Couch surfing">Couch surfing</option>
+                        <option value="Just got a place">Just got a place</option>
+                        <option value="Unhoused">Unhoused</option>
+                        <option value="Renting a room">Renting a room</option>
+                        <option value="Living in Car">Living in Car</option>
+                        <option value="Prefer not to say">Prefer not to say</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Consent Section -->
+            <div class="form-section" data-section="3">
+                <div class="section-title">📋 Consent & Agreement</div>
+                
+                <div class="consent-box">
+                    <h3>Agreement to Provide Information for PIT Count</h3>
+                    <p>Please select ONE of the following consent options:</p>
+                    
+                    <div class="radio-group" style="margin: 20px 0;">
+                        <label class="radio-item">
+                            <input type="radio" name="consent_type" value="full_name" onchange="updateConsentType()">
+                            <div>
+                                <strong>Consent to giving my full name and other information for PIT count</strong>
+                            </div>
+                        </label>
+                        
+                        <label class="radio-item">
+                            <input type="radio" name="consent_type" value="initials_only" onchange="updateConsentType()">
+                            <div>
+                                <strong>Only consent to giving my initials and other information for PIT count</strong>
+                            </div>
+                        </label>
+                        
+                        <label class="radio-item">
+                            <input type="radio" name="consent_type" value="no_name" onchange="updateConsentType()">
+                            <div>
+                                <strong>Do not give my name information, but provide all other information for PIT count</strong>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Date and Time (Auto-populated) -->
+                <div class="form-group">
+                    <label>Date and Time</label>
+                    <input type="text" id="submission_datetime" name="submission_datetime" class="form-control" readonly>
+                </div>
+
+                <!-- Signature Field -->
+                <div class="form-group">
+                    <label for="signature">Signature *</label>
+                    <p style="margin: 10px 0; color: #666; font-size: 14px;">
+                        I agree to provide this information to Northumberland County and to OUTSINC for a PIT count assessment only.
+                    </p>
+                    <input type="text" id="signature" name="signature" class="form-control signature-field" placeholder="Type your full name as signature" required>
+                    <small style="color: #666;">Type your full name to sign</small>
+                </div>
+            </div>
+
+            <!-- Submit Section -->
+            <div class="form-section">
+                <div style="text-align: center; padding: 30px 0;">
+                    <button type="submit" class="btn btn-success btn-lg" id="submit-btn" disabled>
+                        ✓ Submit Assessment
+                    </button>
+                </div>
+                <p style="text-align: center; color: #666; margin-top: 15px;">
+                    Thank you for participating in this Point-in-Time count!
+                </p>
+            </div>
+        </form>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        let assessmentForm;
+        let assessmentId;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get assessment ID from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            assessmentId = urlParams.get('id');
+            
+            if (!assessmentId) {
+                showAlert('No assessment ID provided', 'danger');
+                setTimeout(() => window.location.href = 'new-assessment.html', 2000);
+                return;
+            }
+            
+            // Initialize form
+            assessmentForm = new AssessmentForm('QUICK', assessmentId, null, null);
+            assessmentForm.totalSections = 3;
+            
+            // Set current date and time
+            updateDateTime();
+            setInterval(updateDateTime, 1000); // Update every second
+            
+            // Update progress as user fills form
+            document.getElementById('assessment-form').addEventListener('input', function() {
+                updateProgressBar();
+                validateForm();
+            });
+            
+            document.getElementById('assessment-form').addEventListener('change', function() {
+                updateProgressBar();
+                validateForm();
+            });
+            
+            // Initial validation
+            validateForm();
+        });
+        
+        function updateDateTime() {
+            const now = new Date();
+            const formatted = now.toLocaleString('en-CA', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            });
+            document.getElementById('submission_datetime').value = formatted;
+        }
+        
+        function updateProgressBar() {
+            const form = document.getElementById('assessment-form');
+            const inputs = form.querySelectorAll('input[required], select[required]');
+            const filled = Array.from(inputs).filter(input => {
+                if (input.type === 'radio') {
+                    return form.querySelector(`input[name="${input.name}"]:checked`) !== null;
+                }
+                return input.value.trim() !== '';
+            });
+            
+            // Count unique required fields
+            const uniqueNames = new Set();
+            inputs.forEach(input => {
+                if (input.type === 'radio') {
+                    uniqueNames.add(input.name);
+                } else {
+                    uniqueNames.add(input.id || input.name);
+                }
+            });
+            
+            const uniqueFilled = new Set();
+            filled.forEach(input => {
+                if (input.type === 'radio') {
+                    uniqueFilled.add(input.name);
+                } else {
+                    uniqueFilled.add(input.id || input.name);
+                }
+            });
+            
+            const progress = (uniqueFilled.size / uniqueNames.size) * 100;
+            document.getElementById('progress-fill').style.width = `${progress}%`;
+        }
+        
+        function updateConsentType() {
+            validateForm();
+        }
+        
+        function validateForm() {
+            const firstName = document.getElementById('first_name').value.trim();
+            const lastName = document.getElementById('last_name').value.trim();
+            const gender = document.getElementById('gender').value;
+            const staying = document.getElementById('currently_staying').value;
+            const consentType = document.querySelector('input[name="consent_type"]:checked');
+            const signature = document.getElementById('signature').value.trim();
+            
+            const isValid = firstName && lastName && gender && staying && consentType && signature;
+            
+            document.getElementById('submit-btn').disabled = !isValid;
+        }
+        
+        async function handleSubmit(event) {
+            event.preventDefault();
+            
+            // Validate that either DOB or age is provided
+            const dob = document.getElementById('date_of_birth').value;
+            const age = document.getElementById('age').value;
+            
+            if (!dob && !age) {
+                showAlert('Please provide either Date of Birth or Age', 'warning');
+                return;
+            }
+            
+            if (confirm('Are you sure you want to submit this assessment? Once submitted, it will be recorded.')) {
+                const result = await assessmentForm.save(true);
+                if (result.success) {
+                    showAlert('Assessment completed successfully!', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'assessment-complete.html';
+                    }, 2000);
+                } else {
+                    showAlert('Error completing assessment: ' + result.message, 'danger');
+                }
+            }
+        }
+    </script>
+</body>
+</html>
