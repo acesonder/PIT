@@ -97,6 +97,42 @@
                 <p style="text-align: center; padding: 20px;">Loading...</p>
             </div>
         </section>
+        
+        <!-- Client Status Management -->
+        <section class="form-section">
+            <h2>Client Status Management</h2>
+            <p>Select a client to view and update their current living situation status:</p>
+            
+            <div class="form-group">
+                <label for="admin-client-select">Select Client</label>
+                <select id="admin-client-select" class="form-control" onchange="loadClientStatus()">
+                    <option value="">Select a client...</option>
+                </select>
+            </div>
+            
+            <div id="client-status-section" style="display: none; margin-top: 20px;">
+                <div class="form-group">
+                    <label for="client-living-situation">Current Living Situation</label>
+                    <select id="client-living-situation" class="form-control">
+                        <option value="">Select...</option>
+                        <option value="Transition House">Transition House</option>
+                        <option value="Couch surfing">Couch surfing</option>
+                        <option value="Just got a place">Just got a place</option>
+                        <option value="Unhoused">Unhoused</option>
+                        <option value="Renting a room">Renting a room</option>
+                        <option value="Living in Car">Living in Car</option>
+                        <option value="Prefer not to say">Prefer not to say</option>
+                    </select>
+                </div>
+                
+                <button class="btn btn-primary" onclick="updateClientStatus()">Apply Changes</button>
+                
+                <div id="status-update-result" style="margin-top: 15px; padding: 10px; border-radius: 5px; display: none;">
+                    <div id="status-message"></div>
+                    <div id="status-timestamp" style="font-size: 12px; color: #666; margin-top: 5px;"></div>
+                </div>
+            </div>
+        </section>
 
         <!-- System Information -->
         <section class="form-section">
@@ -122,12 +158,92 @@
 
     <script src="js/app.js"></script>
     <script>
+        let clientsData = [];
+        let selectedClientData = null;
+        
         // Initialize dashboard
         document.addEventListener('DOMContentLoaded', async function() {
             await checkAdminSession();
             await displayDashboardStats();
             await loadRecentAssessments();
+            await loadClientsForAdmin();
         });
+        
+        async function loadClientsForAdmin() {
+            const clients = await loadClients();
+            clientsData = clients;
+            
+            const select = document.getElementById('admin-client-select');
+            if (select) {
+                select.innerHTML = '<option value="">Select a client...</option>';
+                clients.forEach(client => {
+                    const option = document.createElement('option');
+                    option.value = client.id;
+                    option.textContent = `${client.first_name} ${client.last_name}${client.date_of_birth ? ' (DOB: ' + client.date_of_birth + ')' : ''}`;
+                    select.appendChild(option);
+                });
+            }
+        }
+        
+        async function loadClientStatus() {
+            const clientId = document.getElementById('admin-client-select').value;
+            
+            if (!clientId) {
+                document.getElementById('client-status-section').style.display = 'none';
+                return;
+            }
+            
+            // Get the most recent assessment for this client
+            const result = await apiRequest('get_client_latest_assessment', { client_id: clientId });
+            
+            if (result.success && result.assessment) {
+                selectedClientData = result.assessment;
+                const livingSituation = result.assessment.assessment_data?.currently_staying || '';
+                
+                document.getElementById('client-living-situation').value = livingSituation;
+                document.getElementById('client-status-section').style.display = 'block';
+                document.getElementById('status-update-result').style.display = 'none';
+            } else {
+                document.getElementById('client-status-section').style.display = 'block';
+                document.getElementById('client-living-situation').value = '';
+                document.getElementById('status-update-result').style.display = 'none';
+            }
+        }
+        
+        async function updateClientStatus() {
+            const clientId = document.getElementById('admin-client-select').value;
+            const newStatus = document.getElementById('client-living-situation').value;
+            
+            if (!clientId || !newStatus) {
+                showAlert('Please select both a client and a living situation', 'warning');
+                return;
+            }
+            
+            const result = await apiRequest('update_client_status', {
+                client_id: clientId,
+                living_situation: newStatus
+            });
+            
+            const resultDiv = document.getElementById('status-update-result');
+            const messageDiv = document.getElementById('status-message');
+            const timestampDiv = document.getElementById('status-timestamp');
+            
+            if (result.success) {
+                resultDiv.style.display = 'block';
+                resultDiv.style.backgroundColor = '#d4edda';
+                resultDiv.style.border = '1px solid #c3e6cb';
+                messageDiv.textContent = '✓ Status updated successfully';
+                messageDiv.style.color = '#155724';
+                timestampDiv.textContent = `Updated at: ${new Date().toLocaleString()}`;
+            } else {
+                resultDiv.style.display = 'block';
+                resultDiv.style.backgroundColor = '#f8d7da';
+                resultDiv.style.border = '1px solid #f5c6cb';
+                messageDiv.textContent = '✗ ' + (result.message || 'Failed to update status');
+                messageDiv.style.color = '#721c24';
+                timestampDiv.textContent = `Failed at: ${new Date().toLocaleString()}`;
+            }
+        }
         
         async function loadRecentAssessments() {
             const assessments = await loadAllAssessments();

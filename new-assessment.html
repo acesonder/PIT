@@ -28,7 +28,12 @@
         <!-- Step 1: Staff Selection -->
         <section id="step-staff" class="form-section">
             <h2>Step 1: Staff Information</h2>
-            <p>Select the outreach staff member conducting this assessment:</p>
+            <p>Enter the password and select the outreach staff member conducting this assessment:</p>
+            
+            <div class="form-group">
+                <label for="assessment-password">Assessment Password *</label>
+                <input type="password" id="assessment-password" class="form-control" required placeholder="Enter password to begin assessment">
+            </div>
             
             <div class="form-group">
                 <label for="staff-select">Outreach Staff Member *</label>
@@ -42,51 +47,58 @@
 
         <!-- Step 2: Client Identification -->
         <section id="step-client" class="form-section hidden">
-            <h2>Step 2: Client Identification</h2>
-            <p>Enter the client's information. We'll check if they've already been assessed:</p>
-            
-            <div class="form-group">
-                <label for="client-first-name">First Name *</label>
-                <input type="text" id="client-first-name" class="form-control" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="client-last-name">Last Name *</label>
-                <input type="text" id="client-last-name" class="form-control" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="client-dob">Date of Birth (Optional)</label>
-                <input type="date" id="client-dob" class="form-control">
-                <small style="color: #666;">Providing date of birth helps prevent duplicates</small>
-            </div>
-            
-            <button class="btn btn-primary" onclick="checkClientDuplicate()">Check & Continue →</button>
-            <button class="btn btn-outline" onclick="goToStep1()">← Back</button>
+            <h2>Step 2: Previously Assessed Clients</h2>
             
             <!-- Existing Clients List -->
-            <div style="margin-top: 30px;">
+            <div style="margin-top: 20px;">
                 <h3>Previously Assessed Clients</h3>
                 <div id="existing-clients-list" class="client-list">
                     <p style="text-align: center; color: #666;">Loading...</p>
                 </div>
             </div>
+            
+            <div style="margin-top: 30px;">
+                <h3 style="margin-bottom: 20px;">Is the client on this list?</h3>
+                
+                <div style="margin: 20px 0;">
+                    <button class="btn btn-primary" onclick="showClientOnListFlow()">YES - Client is on the list</button>
+                    <button class="btn btn-secondary" onclick="proceedToConsent()">NO - Client is NOT on the list</button>
+                </div>
+                
+                <button class="btn btn-outline" onclick="goToStep1()">← Back</button>
+            </div>
         </section>
-
-        <!-- Step 3: Duplicate Warning -->
-        <section id="step-duplicate-warning" class="form-section hidden">
-            <div class="alert alert-warning">
-                <h2>⚠️ Client Already Exists</h2>
-                <p id="duplicate-message"></p>
+        
+        <!-- Step 2a: Client on List Flow -->
+        <section id="step-client-on-list" class="form-section hidden">
+            <h2>Update or Extensive Assessment</h2>
+            <p>Are you wanting to update or do a more extensive PIT assessment for the client?</p>
+            
+            <div style="margin: 20px 0;">
+                <button class="btn btn-primary" onclick="showClientSelection()">YES - Update or extend assessment</button>
+                <button class="btn btn-secondary" onclick="returnToLanding()">NO - Return to home</button>
             </div>
             
-            <div style="margin-top: 20px;">
-                <button class="btn btn-outline" onclick="goToStep2()">← Go Back and Correct</button>
-                <button class="btn btn-danger" onclick="proceedAnyway()">Proceed Anyway (Create Duplicate)</button>
+            <button class="btn btn-outline" onclick="backToStep2()">← Back</button>
+        </section>
+        
+        <!-- Step 2b: Client Selection -->
+        <section id="step-client-selection" class="form-section hidden">
+            <h2>Select Client</h2>
+            <p>Please select the client from the list:</p>
+            
+            <div class="form-group">
+                <label for="client-select-dropdown">Client *</label>
+                <select id="client-select-dropdown" class="form-control" required>
+                    <option value="">Select client...</option>
+                </select>
             </div>
+            
+            <button class="btn btn-primary" onclick="proceedWithSelectedClient()">Continue to Assessment →</button>
+            <button class="btn btn-outline" onclick="backToClientOnList()">← Back</button>
         </section>
 
-        <!-- Step 4: Consent -->
+        <!-- Step 3: Consent -->
         <section id="step-consent" class="form-section hidden">
             <h2>Step 3: Consent & Data Sharing</h2>
             
@@ -250,84 +262,127 @@
         let clientId = null;
         let consentType = null;
         let selectedAssessmentType = null;
+        let clientsList = [];
+        
+        // Assessment password (from system settings)
+        const ASSESSMENT_PASSWORD = '079777';
         
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
             populateStaffDropdown('staff-select');
-            displayClientList('existing-clients-list');
+            loadAndDisplayClients();
         });
+        
+        async function loadAndDisplayClients() {
+            clientsList = await loadClients();
+            displayClientList('existing-clients-list');
+            populateClientDropdown();
+        }
+        
+        function populateClientDropdown() {
+            const dropdown = document.getElementById('client-select-dropdown');
+            if (dropdown) {
+                dropdown.innerHTML = '<option value="">Select client...</option>';
+                clientsList.forEach(client => {
+                    const option = document.createElement('option');
+                    option.value = client.id;
+                    option.textContent = `${client.first_name} ${client.last_name}${client.date_of_birth ? ' (DOB: ' + client.date_of_birth + ')' : ''}`;
+                    dropdown.appendChild(option);
+                });
+            }
+        }
         
         // Navigation functions
         function goToStep1() {
-            document.getElementById('step-client').classList.add('hidden');
+            hideAllSections();
             document.getElementById('step-staff').classList.remove('hidden');
         }
         
         function goToStep2() {
+            const password = document.getElementById('assessment-password').value;
             selectedStaffId = document.getElementById('staff-select').value;
+            
+            if (!password) {
+                showAlert('Please enter the assessment password', 'warning');
+                return;
+            }
+            
+            if (password !== ASSESSMENT_PASSWORD) {
+                showAlert('Incorrect password. Please try again.', 'danger');
+                return;
+            }
+            
             if (!selectedStaffId) {
                 showAlert('Please select a staff member', 'warning');
                 return;
             }
             
-            document.getElementById('step-staff').classList.add('hidden');
-            document.getElementById('step-consent').classList.add('hidden');
-            document.getElementById('step-duplicate-warning').classList.add('hidden');
+            hideAllSections();
             document.getElementById('step-client').classList.remove('hidden');
         }
         
-        function goToConsent() {
-            document.getElementById('step-assessment-type').classList.add('hidden');
-            document.getElementById('step-consent').classList.remove('hidden');
+        function backToStep2() {
+            hideAllSections();
+            document.getElementById('step-client').classList.remove('hidden');
         }
         
-        // Check for duplicate client
-        async function checkClientDuplicate() {
-            const firstName = document.getElementById('client-first-name').value.trim();
-            const lastName = document.getElementById('client-last-name').value.trim();
-            const dob = document.getElementById('client-dob').value;
+        function showClientOnListFlow() {
+            hideAllSections();
+            document.getElementById('step-client-on-list').classList.remove('hidden');
+        }
+        
+        function backToClientOnList() {
+            hideAllSections();
+            document.getElementById('step-client-on-list').classList.remove('hidden');
+        }
+        
+        function returnToLanding() {
+            window.location.href = 'index.html';
+        }
+        
+        function showClientSelection() {
+            hideAllSections();
+            document.getElementById('step-client-selection').classList.remove('hidden');
+        }
+        
+        async function proceedWithSelectedClient() {
+            const selectedClientId = document.getElementById('client-select-dropdown').value;
             
-            if (!firstName || !lastName) {
-                showAlert('Please enter both first and last name', 'warning');
+            if (!selectedClientId) {
+                showAlert('Please select a client', 'warning');
                 return;
             }
             
-            const result = await checkDuplicate(firstName, lastName, dob || null);
+            clientId = selectedClientId;
             
-            if (result.exists) {
-                // Show duplicate warning
-                document.getElementById('duplicate-message').textContent = 
-                    `A client named ${firstName} ${lastName} has already been assessed ${result.client.assessment_count || 0} time(s).`;
-                document.getElementById('step-client').classList.add('hidden');
-                document.getElementById('step-duplicate-warning').classList.remove('hidden');
-            } else {
-                // Create new client and proceed
-                await createNewClient();
-            }
+            // Proceed to consent
+            hideAllSections();
+            document.getElementById('step-consent').classList.remove('hidden');
         }
         
-        async function proceedAnyway() {
-            await createNewClient();
-        }
-        
-        async function createNewClient() {
-            const firstName = document.getElementById('client-first-name').value.trim();
-            const lastName = document.getElementById('client-last-name').value.trim();
-            const dob = document.getElementById('client-dob').value;
-            
-            const result = await createClient(firstName, lastName, dob || null);
+        async function proceedToConsent() {
+            // For new client (not on list), we need to create a placeholder client
+            // We'll collect their name later in the assessment
+            const result = await createClient('New', 'Client-' + Date.now(), null);
             
             if (result.success) {
                 clientId = result.client_id;
-                showAlert('Client information saved', 'success');
-                
-                // Proceed to consent
-                document.getElementById('step-client').classList.add('hidden');
-                document.getElementById('step-duplicate-warning').classList.add('hidden');
+                hideAllSections();
                 document.getElementById('step-consent').classList.remove('hidden');
             } else {
-                showAlert(result.message || 'Error creating client', 'danger');
+                showAlert(result.message || 'Error creating client record', 'danger');
             }
+        }
+        
+        function goToConsent() {
+            hideAllSections();
+            document.getElementById('step-consent').classList.remove('hidden');
+        }
+        
+        function hideAllSections() {
+            document.querySelectorAll('.form-section').forEach(section => {
+                section.classList.add('hidden');
+            });
         }
         
         function updateConsentType(type) {
@@ -348,7 +403,7 @@
             const result = await saveConsent(clientId, fullConsent, partialConsent);
             
             if (result.success) {
-                document.getElementById('step-consent').classList.add('hidden');
+                hideAllSections();
                 document.getElementById('step-assessment-type').classList.remove('hidden');
             } else {
                 showAlert(result.message || 'Error saving consent', 'danger');
