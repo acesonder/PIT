@@ -166,8 +166,12 @@ try {
             $fullConsent = $request['full_consent'] ?? false;
             $partialConsent = $request['partial_consent'] ?? false;
             
+            // Convert boolean values to integers (0 or 1) for MySQL BOOLEAN/TINYINT compatibility
+            $fullConsentInt = $fullConsent ? 1 : 0;
+            $partialConsentInt = $partialConsent ? 1 : 0;
+            
             $stmt = $db->prepare("INSERT INTO consent_records (client_id, full_consent, partial_consent) VALUES (?, ?, ?)");
-            $stmt->execute([$clientId, $fullConsent, $partialConsent]);
+            $stmt->execute([$clientId, $fullConsentInt, $partialConsentInt]);
             
             echo json_encode(['success' => true, 'message' => 'Consent saved']);
             break;
