@@ -40,7 +40,19 @@ try {
         
         // Get total count for landing page
         case 'get_total_count':
-            $stmt = $db->query("SELECT COUNT(*) as total FROM pit_assessments WHERE is_complete = TRUE");
+            // Count people with specific current living situations:
+            // PREFER NOT TO SAY, LIVING IN A CAR, UNHOUSED, COUCH SURFING
+            $stmt = $db->query("
+                SELECT COUNT(*) as total 
+                FROM pit_assessments 
+                WHERE is_complete = TRUE 
+                AND (
+                    JSON_UNQUOTE(JSON_EXTRACT(assessment_data, '$.currently_staying')) = 'Prefer not to say'
+                    OR JSON_UNQUOTE(JSON_EXTRACT(assessment_data, '$.currently_staying')) = 'Living in Car'
+                    OR JSON_UNQUOTE(JSON_EXTRACT(assessment_data, '$.currently_staying')) = 'Unhoused'
+                    OR JSON_UNQUOTE(JSON_EXTRACT(assessment_data, '$.currently_staying')) = 'Couch surfing'
+                )
+            ");
             $result = $stmt->fetch();
             echo json_encode(['success' => true, 'total' => $result['total']]);
             break;
@@ -372,6 +384,72 @@ try {
             $stats['last_updated'] = $lastUpdate['last_update'] ?? date('Y-m-d H:i:s');
             
             echo json_encode(['success' => true, 'stats' => $stats]);
+            break;
+        
+        // Get client's latest assessment
+        case 'get_client_latest_assessment':
+            if (!isset($_SESSION['admin_logged_in'])) {
+                echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+                break;
+            }
+            
+            $clientId = $request['client_id'] ?? 0;
+            
+            $stmt = $db->prepare("
+                SELECT pa.*, c.first_name, c.last_name 
+                FROM pit_assessments pa
+                JOIN clients c ON pa.client_id = c.id
+                WHERE pa.client_id = ?
+                ORDER BY pa.created_at DESC
+                LIMIT 1
+            ");
+            $stmt->execute([$clientId]);
+            $assessment = $stmt->fetch();
+            
+            if ($assessment) {
+                $assessment['assessment_data'] = json_decode($assessment['assessment_data'], true);
+                echo json_encode(['success' => true, 'assessment' => $assessment]);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'No assessment found for this client']);
+            }
+            break;
+        
+        // Update client's current living situation status
+        case 'update_client_status':
+            if (!isset($_SESSION['admin_logged_in'])) {
+                echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+                break;
+            }
+            
+            $clientId = $request['client_id'] ?? 0;
+            $livingSituation = $request['living_situation'] ?? '';
+            
+            // Get the latest assessment for this client
+            $stmt = $db->prepare("
+                SELECT id, assessment_data 
+                FROM pit_assessments 
+                WHERE client_id = ?
+                ORDER BY created_at DESC
+                LIMIT 1
+            ");
+            $stmt->execute([$clientId]);
+            $assessment = $stmt->fetch();
+            
+            if ($assessment) {
+                $assessmentData = json_decode($assessment['assessment_data'], true);
+                $assessmentData['currently_staying'] = $livingSituation;
+                
+                $updateStmt = $db->prepare("
+                    UPDATE pit_assessments 
+                    SET assessment_data = ?, updated_at = NOW() 
+                    WHERE id = ?
+                ");
+                $updateStmt->execute([json_encode($assessmentData), $assessment['id']]);
+                
+                echo json_encode(['success' => true, 'message' => 'Client status updated']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'No assessment found for this client']);
+            }
             break;
         
         default:
