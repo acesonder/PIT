@@ -15,8 +15,9 @@ This document describes the images needed for the PIT Count application. Generat
 - Could incorporate initials "OI" or "OUTSINC" creatively
 
 ### 2. Hero/Landing Page Image
-**File**: `hero-community-outreach.jpg`  
-**Size**: 1600x600px (minimum)  
+**File**: `Landingpagepicture.png` or `hero-community-outreach.jpg`  
+**Size**: 1600x600px (minimum) - **Recommended: 1600x600px to 2400x900px**  
+**Aspect Ratio**: 16:6 to 8:3 (horizontal/landscape)  
 **Description**:
 - **Scene**: Downtown Cobourg, Ontario (recognizable landmarks like Victoria Hall or waterfront)
 - **People**: Diverse group of 4-6 people including:
@@ -138,6 +139,16 @@ Once images are ready:
 3. Add appropriate alt text for accessibility
 4. Optimize images for web (compress, appropriate format)
 5. Test responsive behavior on mobile devices
+
+### Current Implementation Status
+
+✅ **Landing Page Image (index.html)**: 
+- Updated to use `images/Landingpagepicture.png`
+- Image displays at full container width (max-width: 800px, height: 300px)
+- Uses `object-fit: cover` to maintain aspect ratio
+- Includes descriptive alt text for accessibility
+- **To activate**: Simply place your `Landingpagepicture.png` file in the `/images/` directory
+- **Recommended resolution**: 1600x600px minimum (2400x900px for high-DPI displays)
 
 ## Attribution
 
