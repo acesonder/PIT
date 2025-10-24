@@ -334,15 +334,32 @@ async function loadDashboardStats() {
 async function displayDashboardStats() {
     const stats = await loadDashboardStats();
     if (stats) {
-        document.getElementById('stat-total')?.textContent = stats.total_assessments || 0;
-        document.getElementById('stat-short')?.textContent = stats.short_assessments || 0;
-        document.getElementById('stat-medium')?.textContent = stats.medium_assessments || 0;
-        document.getElementById('stat-hard')?.textContent = stats.hard_assessments || 0;
-        document.getElementById('stat-clients')?.textContent = stats.unique_clients || 0;
-        document.getElementById('stat-today')?.textContent = stats.assessments_today || 0;
-        document.getElementById('stat-week')?.textContent = stats.assessments_week || 0;
-        document.getElementById('stat-month')?.textContent = stats.assessments_month || 0;
-        document.getElementById('last-updated')?.textContent = `Last updated: ${formatDate(stats.last_updated)}`;
+        const statTotal = document.getElementById('stat-total');
+        if (statTotal) statTotal.textContent = stats.total_assessments || 0;
+        
+        const statShort = document.getElementById('stat-short');
+        if (statShort) statShort.textContent = stats.short_assessments || 0;
+        
+        const statMedium = document.getElementById('stat-medium');
+        if (statMedium) statMedium.textContent = stats.medium_assessments || 0;
+        
+        const statHard = document.getElementById('stat-hard');
+        if (statHard) statHard.textContent = stats.hard_assessments || 0;
+        
+        const statClients = document.getElementById('stat-clients');
+        if (statClients) statClients.textContent = stats.unique_clients || 0;
+        
+        const statToday = document.getElementById('stat-today');
+        if (statToday) statToday.textContent = stats.assessments_today || 0;
+        
+        const statWeek = document.getElementById('stat-week');
+        if (statWeek) statWeek.textContent = stats.assessments_week || 0;
+        
+        const statMonth = document.getElementById('stat-month');
+        if (statMonth) statMonth.textContent = stats.assessments_month || 0;
+        
+        const lastUpdated = document.getElementById('last-updated');
+        if (lastUpdated) lastUpdated.textContent = `Last updated: ${formatDate(stats.last_updated)}`;
     }
 }
 
